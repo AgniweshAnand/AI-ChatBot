@@ -1,0 +1,254 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap'); 
+
+
+body {
+    background-color: #191919; 
+    color: #ffffff;             
+    font-family: 'Segoe UI', 'Roboto', sans-serif; 
+    margin: 0;
+    padding: 0;
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; 
+    box-sizing: border-box;
+    scrollbar-width: none; 
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+
+#stocksai-header {
+    position: fixed; 
+    top: 20px;
+    left: 30px; 
+    font-family: 'Poppins', sans-serif; 
+    font-size: clamp(20px, 3.5vw, 30px); 
+    font-weight: 600;
+    color: #ffffff;
+    z-index: 100; 
+}
+
+
+
+#page-wrapper {
+    width: 100%;
+    max-width: 1400px; 
+    height: 100vh; 
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    padding: 20px; 
+    box-sizing: border-box;
+}
+
+
+#chatbot-container {
+    background-color: #191919; 
+    width: 100%; 
+    max-width: 700px;
+    padding-bottom: 40px;
+    height: 95vh;
+    display: flex;
+    flex-direction: column; 
+    border-radius: 12px; 
+    overflow: hidden; 
+    position: relative;
+    /* position: fixed;  */
+    box-sizing: border-box;
+}
+
+
+#chat-display {
+    flex: 1;
+    padding: 20px;
+    padding-bottom: 90px; 
+    overflow-y: auto; 
+    scroll-behavior: smooth;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; 
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin; 
+    scrollbar-color: #e4513d #191919; 
+}
+
+#chat-display::-webkit-scrollbar {
+    width: 8px; 
+}
+
+#chat-display::-webkit-scrollbar-track {
+    background: #191919; 
+    border-radius: 10px;
+}
+
+#chat-display::-webkit-scrollbar-thumb {
+    background-color: #e4513d;
+    border-radius: 10px;
+    border: 2px solid #191919;
+}
+
+.search-container{
+    position:absolute;
+    bottom: 50%;
+    left: 50%;
+    transform: translate(-50%, 50%);
+    transition: bottom 0.7s ease-in-out;
+    width: calc(100% - 40px);
+    max-width: 750px;
+    display: flex;
+    border-radius: 25px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    background-color: #343434;
+    z-index: 5;
+}
+
+
+/* .search-container {
+    position: absolute; 
+    bottom: 10px; 
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 40px); 
+    max-width: 750px; 
+    display: flex;
+    border-radius: 25px;
+    overflow: hidden; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    background-color: #343434; 
+    z-index: 5; 
+} */
+
+
+.search-container.chat-active{
+    bottom: 20px!important;
+    transform: translateX(-50%)!important;
+}
+
+.search-input {
+    flex-grow: 1;
+    padding: 16px 20px;
+    border: none;
+    outline: none;
+    font-size: clamp(14px, 3vw, 16px);
+    background-color: #343434;
+    color: white;
+    border-radius: 25px 0 0 25px;
+    caret-color: #e4513d;
+    margin: 20px;
+    word-wrap: break-word;
+}
+
+.search-button {
+    background-color: #e4513d;
+    color: white;
+    border: none;
+    padding: 15px,15px ;
+    border-radius: 20px 20px 20px;
+    cursor: pointer;
+    font-size: clamp(14px, 3vw, 16px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
+    width: 60px;
+    margin: 5px 5px 40px;
+}
+
+.search-button .material-icons {
+    font-size: clamp(20px, 4vw, 24px);
+    color: white;
+    padding: 0;
+}
+
+.search-button:hover {
+    background-color: #f25743;
+    transform: scale(0.95);
+}
+
+.user-message {
+    align-self: flex-end;
+    margin-left: auto; 
+    padding: clamp(8px, 2vw, 12px)clamp(12px, 3vw, 18px);
+    background-color: #e4513d;
+    border-radius: 15px 4px 15px 15px;
+    display: block;
+    max-width: 80%;
+    word-wrap: break-word;
+    line-height: 1.2;
+    font-size: clamp(14px, 3vw, 16px);
+    box-sizing: border-box;
+}
+
+.bot-message {
+    align-self: flex-start;
+    margin-right: auto;
+    padding: clamp(8px, 2vw, 12px) clamp(12px, 3vw, 18px);
+    background-color: #343434; /* Bot message background color */
+    border-radius: 15px 15px 15px 4px;
+    display: block;
+    max-width: 80%;
+    word-wrap: break-word;
+    line-height: 1.5;
+    font-size: clamp(14px, 3vw, 16px);
+    box-sizing: border-box;
+    color: #ffffff;
+}
+
+
+@media (max-width: 768px) {
+    #stocksai-header {
+        font-size: clamp(18px, 5vw, 24px);
+        top: 15px;
+        left: 15px;
+    }
+
+    #page-wrapper {
+        padding: 10px;
+        height: 100vh;
+        align-items: stretch;
+        justify-content: stretch;
+    }
+
+    #chatbot-container {
+        height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .search-container {
+        width: calc(100% - 20px);
+        bottom: 10px;
+    }
+
+    .search-input {
+        padding: 14px 18px;
+    }
+
+    .search-button {
+        padding: 12px;
+        width: 50px;
+    }
+
+    .search-button .material-icons {
+        font-size: clamp(18px, 5vw, 22px);
+    }
+}
+
+@media (max-width: 480px) {
+    #stocksai-header {
+        font-size: clamp(16px, 7vw, 20px); 
+        top: 10px;
+        left: 10px;
+    }
+
+    .search-input {
+        padding: 12px 15px;
+    }
+}
