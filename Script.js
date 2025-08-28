@@ -50,7 +50,7 @@ async function sendMessage() {
 }
 
 input.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter' && !event,ShiftKey) {
         event.preventDefault();
         sendMessage();
     }

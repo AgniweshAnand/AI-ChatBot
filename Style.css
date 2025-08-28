@@ -140,7 +140,13 @@ body::-webkit-scrollbar {
     border-radius: 25px 0 0 25px;
     caret-color: #e4513d;
     margin: 20px;
-    word-wrap: break-word;
+    
+    resize: none;
+    overflow-y: auto;
+    height :auto;
+    max-height: 400px;
+    scrollbar-width: thin;
+    scrollbar-color: #e4513d #343434;
 }
 
 .search-button {
