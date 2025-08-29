@@ -51,6 +51,16 @@ def generate_final_response(user_prompt, ticker_data):
     response = model.generate_content(prompt)
     return response.text.strip()
 
+def generate_other_response(user_prompt):
+    prompt = f"""
+    The user asked a question related to finance or stock but no specific stock ticker were identified:
+    "user_prompt"
+    
+    providde a helpful and intelligent response based on general financial knowledge, trends, investment strategies, or market insights. Be helpful to the user and make sure the responce is not so much long that it seems lenthy.
+    """
+    response = model.generate_content(prompt)
+    return response.text.strip()
+
 
 @app.route('/ask', methods=['POST'])
 def handle_request():
@@ -63,8 +73,8 @@ def handle_request():
     tickers = extract_ticker_from_prompt(user_input)
     
     if not tickers:
-        final_output = "Sorry, I couldn't identify any stocks in your query."
-        return jsonify({'response': final_output})
+        other_reply = generate_other_response(user_input)
+        return jsonify({'response': other_reply})
     
     ticker_data = []
     for ticker in tickers:

@@ -4,6 +4,16 @@ const chatDisplay = document.getElementById('chat-display');
 const searchContainer = document.querySelector('.search-container'); //Get the search container element
 let isFirstMessage = true; //track the first message
 
+
+const baseHeight = 0;
+input.addEventListener('input', () => {
+    input.style.height = baseHeight + 'px';
+    const newHeight = input.scrollHeight;
+    if(newHeight > baseHeight){
+        input.style.height = Math.min(newHeight, 200) + 'px';
+    }
+});
+
 function appendMessage(text, sender) {
     const messageElement = document.createElement('div');
     messageElement.textContent = text;
@@ -22,6 +32,7 @@ async function sendMessage() {
 
     appendMessage(message, 'user');
     input.value = '';
+    input.style.height = 'auto';
     chatDisplay.scrollTop = chatDisplay.scrollHeight;
 
     try {
@@ -50,7 +61,7 @@ async function sendMessage() {
 }
 
 input.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter' && !event,ShiftKey) {
+    if (event.key === 'Enter' && !event.ShiftKey) {
         event.preventDefault();
         sendMessage();
     }

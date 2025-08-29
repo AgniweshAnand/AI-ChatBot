@@ -144,7 +144,9 @@ body::-webkit-scrollbar {
     resize: none;
     overflow-y: auto;
     height :auto;
-    max-height: 400px;
+    max-height: 200px;
+    min-height: 20px;
+    line-height: 1.4;
     scrollbar-width: thin;
     scrollbar-color: #e4513d #343434;
 }
@@ -165,6 +167,7 @@ body::-webkit-scrollbar {
     flex-shrink: 0;
     width: 60px;
     margin: 5px 5px 40px;
+    max-height: 50px;
 }
 
 .search-button .material-icons {
