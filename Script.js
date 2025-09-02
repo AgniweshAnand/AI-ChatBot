@@ -5,7 +5,7 @@ const searchContainer = document.querySelector('.search-container'); //Get the s
 let isFirstMessage = true; //track the first message
 
 
-const baseHeight = 0;
+// const baseHeight = -10;
 input.addEventListener('input', () => {
     input.style.height = baseHeight + 'px';
     const newHeight = input.scrollHeight;

@@ -12,8 +12,7 @@ body {
     /* align-items: center; */
     min-height: 100vh; 
     box-sizing: border-box;
-    scrollbar-width: none;
-    overflow-y: hidden; 
+    scrollbar-width: none; 
 }
 
 body::-webkit-scrollbar {
@@ -30,16 +29,16 @@ body::-webkit-scrollbar {
     font-weight: 600;
     color: #ffffff;
     z-index: 100;   
-    background: none;
+    /* background: none;
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     padding: 0;
-    transition: 0.3s ease;
+    transition: 0.3s ease; */
 }
 
-#stocksai-header:hover{
+/* #stocksai-header:hover{
     transform: scale(1.05);
 }
 
@@ -56,7 +55,7 @@ body::-webkit-scrollbar {
 
 .sidebar-open .arrow-icon{
     transform: rotate(180deg);
-}
+} */
 
 
 #page-wrapper {
@@ -68,7 +67,6 @@ body::-webkit-scrollbar {
     align-items: center; 
     padding: 20px; 
     box-sizing: border-box;
-    margin: 0 auto;
 }
 
 
@@ -121,7 +119,6 @@ body::-webkit-scrollbar {
     position:absolute;
     bottom: 50%;
     left: 50%;
-    justify-content: center;
     transform: translate(-50%, 50%);
     transition: bottom 0.7s ease-in-out;
     width: calc(100% - 40px);
