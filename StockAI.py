@@ -103,7 +103,10 @@ def handle_request():
     
     if not tickers:
         other_reply = generate_other_response(user_input)
-        return jsonify({'response': other_reply})
+        tts_audio_data = generate_tts_audio(other_reply)
+        file_name = 'tts_output.wav'
+        wave_file(file_name, tts_audio_data)
+        return jsonify({'response': other_reply, 'tts_status': f'Audio saved to {file_name}'})
     
     ticker_data = []
     for ticker in tickers:
@@ -113,10 +116,16 @@ def handle_request():
     
     if not ticker_data:
         final_output = "No valid stock data available for the tickers mentioned."
-        return jsonify({'response': final_output})
+        tts_audio_data = generate_tts_audio(final_output)
+        file_name = 'tts_output.wav'
+        wave_file(file_name, tts_audio_data)
+        return jsonify({'response': final_output, 'tts_status': f'Audio saved to {file_name}'})
     
     final_output = generate_final_response(user_input, ticker_data)
-    return jsonify({'response': final_output})
+    tts_audio_data = generate_tts_audio(final_output)
+    file_name = 'tts_output.wav'
+    wave_file(file_name, tts_audio_data)
+    return jsonify({'response': final_output, 'tts_status': f'Audio saved to {file_name}'})
 
 
 if __name__ == "__main__":
