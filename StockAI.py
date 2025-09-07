@@ -2,42 +2,13 @@ import yfinance as yf
 import google.generativeai as genai
 from flask import Flask, request, jsonify # type: ignore
 from flask_cors import CORS # type: ignore
-from google import genai
-from google.genai import types #type: ignore
-import wave
 
 app = Flask(__name__)
 CORS(app)
 
 GOOGLE_API_KEY = "AIzaSyA6RCfUbqJli8NncTTJhdR_p5wB_rSpluA"
 genai.configure(api_key=GOOGLE_API_KEY)
-model = genai.GenerativeModel("models/gemini-1.5-flash-latest")
-tts_client = genai.Client()
-
-def wave_file(filename, pcm, channels=1, rate=24000, sample_width=2):
-    with wave.open(filename, "wb") as wf:
-        wf.setnchannels(channels)
-        wf.setsampwidth(sample_width)
-        wf.setframerate(rate)
-        wf.writeframes(pcm)
-
-def generate_tts_audio(text_to_speak):
-    response = tts_client.models.generate_content(
-        model="gemini-2.5-flash-preview-tts",
-        contents=f"Say cheerfully: {text_to_speak}",
-        config=types.GenerateContentConfig(
-            response_modalities=["AUDIO"],
-            speech_config=types.SpeechConfig(
-                voice_config=types.VoiceConfig(
-                    prebuilt_voice_config=types.PrebuiltVoiceConfig(
-                        voice_name='Kore',
-                    )
-                )
-            ),
-        )
-    )
-    data = response.candidates[0].content.parts[0].inline_data.data
-    return data
+model = genai.GenerativeModel("models/gemini-2.5-flash-preview-05-20")
 
 def extract_ticker_from_prompt(prompt_text):
     prompt = f"""
@@ -103,10 +74,7 @@ def handle_request():
     
     if not tickers:
         other_reply = generate_other_response(user_input)
-        tts_audio_data = generate_tts_audio(other_reply)
-        file_name = 'tts_output.wav'
-        wave_file(file_name, tts_audio_data)
-        return jsonify({'response': other_reply, 'tts_status': f'Audio saved to {file_name}'})
+        return jsonify({'response': other_reply})
     
     ticker_data = []
     for ticker in tickers:
@@ -116,16 +84,10 @@ def handle_request():
     
     if not ticker_data:
         final_output = "No valid stock data available for the tickers mentioned."
-        tts_audio_data = generate_tts_audio(final_output)
-        file_name = 'tts_output.wav'
-        wave_file(file_name, tts_audio_data)
-        return jsonify({'response': final_output, 'tts_status': f'Audio saved to {file_name}'})
+        return jsonify({'response': final_output})
     
     final_output = generate_final_response(user_input, ticker_data)
-    tts_audio_data = generate_tts_audio(final_output)
-    file_name = 'tts_output.wav'
-    wave_file(file_name, tts_audio_data)
-    return jsonify({'response': final_output, 'tts_status': f'Audio saved to {file_name}'})
+    return jsonify({'response': final_output})
 
 
 if __name__ == "__main__":

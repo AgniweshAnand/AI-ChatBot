@@ -7,9 +7,9 @@ body {
     font-family: 'Segoe UI', 'Roboto', sans-serif; 
     margin: 0;
     padding: 0;
-    /* display: flex;  */
-    /* justify-content: center; */
-    /* align-items: center; */
+    display: flex; 
+    justify-content: center;
+    align-items: center;
     min-height: 100vh; 
     box-sizing: border-box;
     scrollbar-width: none; 
@@ -28,9 +28,10 @@ body::-webkit-scrollbar {
     font-size: clamp(20px, 3.5vw, 30px); 
     font-weight: 600;
     color: #ffffff;
-    z-index: 100;   
-    
+    z-index: 100; 
 }
+
+
 
 #page-wrapper {
     width: 100%;
@@ -55,6 +56,7 @@ body::-webkit-scrollbar {
     border-radius: 12px; 
     overflow: hidden; 
     position: relative;
+    /* position: fixed;  */
     box-sizing: border-box;
 }
 
@@ -106,6 +108,22 @@ body::-webkit-scrollbar {
 }
 
 
+/* .search-container {
+    position: absolute; 
+    bottom: 10px; 
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 40px); 
+    max-width: 750px; 
+    display: flex;
+    border-radius: 25px;
+    overflow: hidden; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    background-color: #343434; 
+    z-index: 5; 
+} */
+
+
 .search-container.chat-active{
     bottom: 20px!important;
     transform: translateX(-50%)!important;
@@ -126,6 +144,7 @@ body::-webkit-scrollbar {
     resize: none;
     overflow-y: auto;
     height :auto;
+    /* max-height: 400px; */
     max-height: 200px;
     min-height: 20px;
     line-height: 1.4;
@@ -134,7 +153,7 @@ body::-webkit-scrollbar {
 }
 
 .search-button {
-    background-color: #303030;
+    background-color: #e4513d;
     color: white;
     border: none;
     padding: 15px,15px ;
@@ -159,7 +178,7 @@ body::-webkit-scrollbar {
 }
 
 .search-button:hover {
-    background-color: #e4513d;
+    background-color: #f25743;
     transform: scale(0.95);
 }
 
@@ -190,30 +209,8 @@ body::-webkit-scrollbar {
     font-size: clamp(14px, 3vw, 16px);
     box-sizing: border-box;
     color: #ffffff;
-    /* position: relative; */
-    margin-bottom: 20px;
 }
 
-.mic-icon-container{
-    position: absolute;
-    bottom: 26px;
-    right: 26px;
-    background-color: #303030;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.2s ease;
-    z-index: 10;
-}
-
-.mic-icon-container:hover{
-    background-color: #f25743;
-    transform: scale(1.05);
-}
 
 @media (max-width: 768px) {
     #stocksai-header {
@@ -251,20 +248,6 @@ body::-webkit-scrollbar {
 
     .search-button .material-icons {
         font-size: clamp(18px, 5vw, 22px);
-    }
-
-    .bot-message{
-        margin-bottom: 15px;
-    }
-
-    .mic-icon-container {
-        bottom: -10px; /* Adjust position for smaller screens */
-        right: 8px;
-        width: 25px;
-        height: 25px;
-    }
-    .mic-icon-container .material-icons {
-        font-size: 16px;
     }
 }
 

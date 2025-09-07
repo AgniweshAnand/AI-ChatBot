@@ -13,7 +13,7 @@ input.addEventListener('input', () => {
     }
 });
 
-function dissplayMessage(text, messageClass) {
+function appendMessage(text, sender) {
     const messageElement = document.createElement('div');
     messageElement.textContent = text;
     messageElement.className = `${sender}-message`;
