@@ -2,7 +2,7 @@
 
 
 body {
-    background-color: #191919; 
+    background-color: #131313; 
     color: #ffffff;             
     font-family: 'Segoe UI', 'Roboto', sans-serif; 
     margin: 0;
@@ -46,7 +46,7 @@ body::-webkit-scrollbar {
 
 
 #chatbot-container {
-    background-color: #191919; 
+    background-color: #131313; 
     width: 100%; 
     max-width: 700px;
     padding-bottom: 40px;
@@ -100,11 +100,13 @@ body::-webkit-scrollbar {
     width: calc(100% - 40px);
     max-width: 750px;
     display: flex;
-    border-radius: 25px;
+    border-radius:25px;
     overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    background-color: #343434;
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); */
+    box-shadow: #000000;
+    background-color: #191919;
     z-index: 5;
+    border: 1px solid rgb(48, 48, 48);
 }
 
 
@@ -132,12 +134,12 @@ body::-webkit-scrollbar {
 .search-input {
     flex-grow: 1;
     padding: 16px 20px;
-    border: none;
+    border:none;
     outline: none;
     font-size: clamp(14px, 3vw, 16px);
-    background-color: #343434;
-    color: white;
-    border-radius: 25px 0 0 25px;
+    background-color: #191919;
+    color:rgb(118, 118, 118);
+    border-radius: 25px 25px 25px 25px;
     caret-color: #e4513d;
     margin: 20px;
     
@@ -149,13 +151,13 @@ body::-webkit-scrollbar {
     min-height: 20px;
     line-height: 1.4;
     scrollbar-width: thin;
-    scrollbar-color: #e4513d #343434;
+    scrollbar-color: #e4513d #191919;
 }
 
 .search-button {
-    background-color: #e4513d;
+    background-color: #242424;
     color: white;
-    border: none;
+    border: 1px solid rgb(48, 48, 48);
     padding: 15px,15px ;
     border-radius: 20px 20px 20px;
     cursor: pointer;
@@ -178,7 +180,7 @@ body::-webkit-scrollbar {
 }
 
 .search-button:hover {
-    background-color: #f25743;
+    /* background-color: #f25743; */
     transform: scale(0.95);
 }
 
@@ -186,7 +188,8 @@ body::-webkit-scrollbar {
     align-self: flex-end;
     margin-left: auto; 
     padding: clamp(8px, 2vw, 12px)clamp(12px, 3vw, 18px);
-    background-color: #e4513d;
+    background-color: #191919;
+    border:1px solid #343434;
     border-radius: 15px 4px 15px 15px;
     display: block;
     max-width: 80%;
@@ -200,7 +203,8 @@ body::-webkit-scrollbar {
     align-self: flex-start;
     margin-right: auto;
     padding: clamp(8px, 2vw, 12px) clamp(12px, 3vw, 18px);
-    background-color: #343434; /* Bot message background color */
+    background-color: #161616; /* Bot message background color */
+    border:1px solid #343434;
     border-radius: 15px 15px 15px 4px;
     display: block;
     max-width: 80%;
