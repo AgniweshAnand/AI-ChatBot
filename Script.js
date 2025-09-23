@@ -1,8 +1,8 @@
 const input = document.getElementById('messageInput');
 const sendButton = document.getElementById('sendButton');
 const chatDisplay = document.getElementById('chat-display');
-const searchContainer = document.querySelector('.search-container'); //Get the search container element
-let isFirstMessage = true; //track the first message
+const searchContainer = document.querySelector('.search-container'); 
+let isFirstMessage = true; 
 
 
 input.addEventListener('input', () => {
@@ -24,7 +24,7 @@ async function sendMessage() {
     const message = input.value.trim();
     if (message === '') return;
 
-    if (isFirstMessage) { //Check if this is the first message
+    if (isFirstMessage) { 
         searchContainer.classList.add('chat-active');
         isFirstMessage = false;
     }

@@ -22,7 +22,7 @@ body::-webkit-scrollbar {
 
 #stocksai-header {
     position: fixed; 
-    top: 20px;
+    top: 10px;
     left: 30px; 
     font-family: 'Poppins', sans-serif; 
     font-size: clamp(20px, 3.5vw, 30px); 
@@ -31,7 +31,39 @@ body::-webkit-scrollbar {
     z-index: 100; 
 }
 
+.bot-status-container{
+    display:flex;
+    align-items: center;
+    gap: 8px;
+}
 
+.loading-animation{
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.loading-animation .dot {
+    width: 8px;
+    height: 8px;
+    background-color: #e4513d; 
+    border-radius: 50%;
+    animation: bounce 0.6s infinite alternate;
+}
+
+.loading-animation .dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.loading-animation .dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+.bot-status-text {
+    font-size: 14px;
+    color: white;
+    font-style: italic;
+}
 
 #page-wrapper {
     width: 100%;
@@ -203,16 +235,29 @@ body::-webkit-scrollbar {
     align-self: flex-start;
     margin-right: auto;
     padding: clamp(8px, 2vw, 12px) clamp(12px, 3vw, 18px);
-    background-color: #161616; /* Bot message background color */
+    background-color: #161616; 
     border:1px solid #343434;
-    border-radius: 15px 15px 15px 4px;
-    display: block;
+    border-radius: 4px 15px 15px 15px;
+    /* display: block; */
     max-width: 80%;
     word-wrap: break-word;
     line-height: 1.5;
     font-size: clamp(14px, 3vw, 16px);
     box-sizing: border-box;
     color: #ffffff;
+    display: flex;
+    align-items: center;
+    padding: 10px, 15px;
+}
+
+.bot-message .message-content {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    box-shadow: none;
+}
+.hidden {
+    display: none !important;
 }
 
 
@@ -265,4 +310,9 @@ body::-webkit-scrollbar {
     .search-input {
         padding: 12px 15px;
     }
+}
+
+@keyframes bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-8px); }
 }
