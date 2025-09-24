@@ -38,17 +38,20 @@ body::-webkit-scrollbar {
 }
 
 .loading-animation{
+    padding-left: 28px;
+    padding-top: 5px;
     display: flex;
-    align-items: flex-end;
+    /* align-items: center; */
     gap: 4px;
 }
 
 .loading-animation .dot {
-    width: 8px;
-    height: 8px;
-    background-color: #e4513d; 
-    border-radius: 50%;
+    width: 6px;
+    height: 6px;
+    background-color: #ef3434; 
+    border-radius: 30%;
     animation: bounce 0.6s infinite alternate;
+    align-items: baseline;
 }
 
 .loading-animation .dot:nth-child(2) {
