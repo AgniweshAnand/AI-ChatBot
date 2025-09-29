@@ -10,6 +10,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
 </head>
 <body>
+
+    <button id="sidebar-toggle" class = "sidebar-toggle">
+        <span class="material-icons">menu</span>
+    </button>
+
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-hader">
+            <h2>Recent Chats</h2>
+            <button id="sidebar-close" class="sidebar-close">
+                <span class="material-icon">close</span>
+            </button>
+        </div>
+
+        <button id="new-chat-btn" class="new-chat-btn">
+            <span class="material-icons">add</span>
+            New Chat
+        </button>
+        <div id="chat-history" class="chat-history"></div>
+    </div>
+
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
     <div id="stocksai-header">StocksAI</div>
 
     <div id="page-wrapper">

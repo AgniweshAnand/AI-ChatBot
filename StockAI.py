@@ -46,7 +46,7 @@ def generate_final_response(user_prompt, ticker_data):
     prompt = f"""
     The user asked: "{user_prompt}"
     {price_info}
-    Based on this, generate a friendly and informative financial response, comparing or summarizing the stock performance, make sure the response is crisp and informative.
+    Based on this, generate a friendly and informative financial response, comparing or summarizing the stock performance, make sure the response is crisp and informative, and if the prompt does not containasking perticulat rhings about stocks but about the company itself or any other relevent information provide the response in a crisp and clear format and after generating the responce add a line at the end asking if there is any more question related to the response or question like do you wanna know more.
     """
     response = model.generate_content(prompt)
     return response.text.strip()
@@ -56,7 +56,7 @@ def generate_other_response(user_prompt):
     The user asked a question related to finance or stock but no specific stock ticker were identified:
     "user_prompt"
     
-    providde a helpful and intelligent response based on general financial knowledge, trends, investment strategies, or market insights. Be helpful to the user and make sure the responce is not so much long that it seems lenthy.
+    providde a helpful and intelligent response based on general financial knowledge, trends, investment strategies, or market insights. Be helpful to the user and make sure the responce is not so much long. after giving a short response ask the user if they want to know about the recent trends or the prides of the stock market. 
     """
     response = model.generate_content(prompt)
     return response.text.strip()
