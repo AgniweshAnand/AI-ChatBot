@@ -1,14 +1,22 @@
+import os
+from dotenv import load_dotenv
 import yfinance as yf
 import google.generativeai as genai
-from flask import Flask, request, jsonify # type: ignore
-from flask_cors import CORS # type: ignore
+from flask import Flask, request, jsonify  # type: ignore
+from flask_cors import CORS  # type: ignore
+
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
-GOOGLE_API_KEY = "AIzaSyA6RCfUbqJli8NncTTJhdR_p5wB_rSpluA"
+GOOGLE_API_KEY = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=GOOGLE_API_KEY)
-model = genai.GenerativeModel("models/gemini-2.5-flash-preview-05-20")
+if not GOOGLE_API_KEY:
+    raise ValueError("GEMINI_API_KEY is missing. Check your .env file.")
+
+genai.configure(api_key=GOOGLE_API_KEY)
+model = genai.GenerativeModel("gemini-3.5-flash-lite")
 
 def extract_ticker_from_prompt(prompt_text):
     prompt = f"""
@@ -26,27 +34,35 @@ def extract_ticker_from_prompt(prompt_text):
 def fetch_stock_price(ticker):
     try:
         stock = yf.Ticker(ticker)
-        hist = stock.history(period="5d")
-        hist = hist.dropna(subset=["Close"])
+        hist = stock.history(period="1y")
+        hist = hist.dropna(subset=["Close", "High", "Low"])
         
         if hist.empty:
-            return None, None
+            return None, None, None, None
         price = hist["Close"].iloc[-1]
         date = hist.index[-1].date()
-        return price, date
-    except:
-        return None, None
-    
+        
+        week_52_high = hist["High"].max()
+        week_52_low = hist["Low"].min()
+        
+        return price, date, week_52_high, week_52_low 
+    except Exception:
+        return None, None, None, None
+
 def generate_final_response(user_prompt, ticker_data):
     price_info = "\n".join(
-        f"The current price of {ticker} is {price:.2f} as of {date}."
-        for ticker, price, date in ticker_data
+        f"Stock: {ticker} | Current Price: {price:.2f} (Date: {date}) | 52-Week High: {high:.2f} | 52-Week Low: {low:.2f}"
+        for ticker, price, date, high, low in ticker_data
     )
     
     prompt = f"""
     The user asked: "{user_prompt}"
+    
+    Market Data:
     {price_info}
-    Based on this, generate a friendly and informative financial response, comparing or summarizing the stock performance, make sure the response is crisp and informative, and if the prompt does not containasking perticulat rhings about stocks but about the company itself or any other relevent information provide the response in a crisp and clear format and after generating the responce add a line at the end asking if there is any more question related to the response or question like do you wanna know more.
+    
+    Based on this data, generate a friendly and informative financial response summarizing the stock performance and its position relative to its 52-week high and low.
+    Keep the response crisp and clear. Add a closing line asking if they would like to know more or compare another stock.
     """
     response = model.generate_content(prompt)
     return response.text.strip()
@@ -54,13 +70,12 @@ def generate_final_response(user_prompt, ticker_data):
 def generate_other_response(user_prompt):
     prompt = f"""
     The user asked a question related to finance or stock but no specific stock ticker were identified:
-    "user_prompt"
+    "{user_prompt}"
     
-    providde a helpful and intelligent response based on general financial knowledge, trends, investment strategies, or market insights. Be helpful to the user and make sure the responce is not so much long. after giving a short response ask the user if they want to know about the recent trends or the prides of the stock market. 
+    providde a helpful and intelligent response based on general financial knowledge, trends, investment strategies, or market insights. Be helpful to the user and make sure the responce is not so much long. after giving a short response ask the user if they want to know about the recent trends or the prides of the stock market, make sure do not overexplain and write too long answers until the user prompt specifies to, if the user is telling to do a comparison or even if the prompt is telling to tell about the priice try to provide the price or the other details in bullet points along with the description of what the user specified to do.
     """
     response = model.generate_content(prompt)
     return response.text.strip()
-
 
 @app.route('/ask', methods=['POST'])
 def handle_request():
@@ -78,9 +93,9 @@ def handle_request():
     
     ticker_data = []
     for ticker in tickers:
-        price, date = fetch_stock_price(ticker)
+        price, date, week_52_high, week_52_low = fetch_stock_price(ticker)
         if price is not None:
-            ticker_data.append((ticker, price, date))
+            ticker_data.append((ticker, price, date, week_52_high, week_52_low))
     
     if not ticker_data:
         final_output = "No valid stock data available for the tickers mentioned."
@@ -88,7 +103,6 @@ def handle_request():
     
     final_output = generate_final_response(user_input, ticker_data)
     return jsonify({'response': final_output})
-
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
