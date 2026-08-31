@@ -51,7 +51,7 @@ def fetch_stock_price(ticker):
 
 def generate_final_response(user_prompt, ticker_data):
     price_info = "\n".join(
-        f"Stock: {ticker} | Current Price: {price:.2f} (Date: {date}) | 52-Week High: {high:.2f} | 52-Week Low: {low:.2f}"
+        f"Stock: {ticker} | Current Price: ${price:.2f} (Date: {date}) | 52-Week High: ${high:.2f} | 52-Week Low: ${low:.2f}"
         for ticker, price, date, high, low in ticker_data
     )
     
@@ -61,18 +61,27 @@ def generate_final_response(user_prompt, ticker_data):
     Market Data:
     {price_info}
     
-    Based on this data, generate a friendly and informative financial response summarizing the stock performance and its position relative to its 52-week high and low.
-    Keep the response crisp and clear. Add a closing line asking if they would like to know more or compare another stock.
+    Format your response clearly using Markdown:
+    - **Header:** State the company name/ticker and current price in bold.
+    - **Key Highlights (Bullet points):**
+      * **Current Price:** $X.XX
+      * **52-Week High:** $X.XX
+      * **52-Week Low:** $X.XX
+    - **Analysis:** 1-2 concise sentences analyzing where the price sits relative to its 52-week range.
+    - **Closing:** A short single-line follow-up asking what they want to check next.
+
+    Do not output dense, unbroken paragraphs.
     """
     response = model.generate_content(prompt)
     return response.text.strip()
 
 def generate_other_response(user_prompt):
     prompt = f"""
-    The user asked a question related to finance or stock but no specific stock ticker were identified:
+    The user asked a general finance or market question:
     "{user_prompt}"
     
-    providde a helpful and intelligent response based on general financial knowledge, trends, investment strategies, or market insights. Be helpful to the user and make sure the responce is not so much long. after giving a short response ask the user if they want to know about the recent trends or the prides of the stock market, make sure do not overexplain and write too long answers until the user prompt specifies to, if the user is telling to do a comparison or even if the prompt is telling to tell about the priice try to provide the price or the other details in bullet points along with the description of what the user specified to do.
+    Provide a helpful, crisp response using clean Markdown with short bullet points where applicable. 
+    Keep it concise and avoid overly long essays.
     """
     response = model.generate_content(prompt)
     return response.text.strip()

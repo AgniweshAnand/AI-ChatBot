@@ -91,7 +91,7 @@ async function sendMessage() {
         statusTextElement.style.display = 'none';
 
         // Display the final bot response
-        botResponseElement.textContent = botResponseText;
+        botResponseElement.innerHTML = marked.parse(botResponseText);
         botResponseElement.classList.remove('hidden');
 
     } catch (error) {
@@ -99,7 +99,7 @@ async function sendMessage() {
         
         loadingAnimationElement.style.display = 'none';
         statusTextElement.style.display = 'none';
-        botResponseElement.textContent = "Sorry, I couldn't get a response. Please try again.";
+        botResponseElement.innerHTML = "<p>Sorry, I couldn't get a response. Please try again.</p>";
         botResponseElement.classList.remove('hidden');
     }
 

@@ -539,3 +539,28 @@ body::-webkit-scrollbar {
         font-size: 20px;
     }
 }
+
+/* Markdown formatting inside bot responses */
+.bot-text p {
+    margin: 0 0 8px 0;
+    line-height: 1.5;
+}
+
+.bot-text p:last-child {
+    margin-bottom: 0;
+}
+
+.bot-text ul {
+    margin: 6px 0 10px 0;
+    padding-left: 20px;
+}
+
+.bot-text li {
+    margin-bottom: 4px;
+    line-height: 1.4;
+}
+
+.bot-text strong {
+    color: #00e676; /* Highlights stock prices and metrics in bright green */
+    font-weight: 600;
+}
