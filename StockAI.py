@@ -1,4 +1,5 @@
 import os
+import re
 from dotenv import load_dotenv
 import yfinance as yf
 import google.generativeai as genai
@@ -18,42 +19,113 @@ if not GOOGLE_API_KEY:
 genai.configure(api_key=GOOGLE_API_KEY)
 model = genai.GenerativeModel("gemini-3.5-flash-lite")
 
+import re
+
 def extract_ticker_from_prompt(prompt_text):
     prompt = f"""
-    Extract all stock ticker symbols mentioned in user prompt:
+    Extract ONLY the Yahoo Finance stock ticker symbols from the user prompt:
     "{prompt_text}"
-    Respond with a comma separated list of Yahoo Finance tickers (e.g., TSLA, AAPL, RELIANCE.NS). If none, return "UNKNOWN".
+    
+    Rules:
+    - Respond ONLY with a clean comma-separated list of symbols (e.g. AAPL, TSLA, NVDA, RELIANCE.NS, TCS.NS).
+    - If no specific stock is mentioned, reply with exactly: UNKNOWN
+    - Do not add explanations, prefixes, or markdown.
     """
     response = model.generate_content(prompt)
-    tickers_raw = response.text.strip().replace("\n", "")
-    if "UNKNOWN" in tickers_raw.upper():
+    raw = response.text.strip().replace("`", "").replace("\n", "")
+    
+    if "UNKNOWN" in raw.upper() or not raw:
         return []
-    tickers = [t.strip().upper() for t in tickers_raw.split(",") if t.strip()]
-    return tickers
+    
+    # Strip any extra punctuation or spaces
+    tickers = [re.sub(r'[^A-Z0-9\.\^=-]', '', t.upper()) for t in raw.split(",") if t.strip()]
+    return [t for t in tickers if t]
+
+def format_large_number(num):
+    if num is None:
+        return "N/A"
+    try:
+        num = float(num)
+        if num >= 1e12:
+            return f"${num / 1e12:.2f}T"
+        elif num >= 1e9:
+            return f"${num / 1e9:.2f}B"
+        elif num >= 1e6:
+            return f"${num / 1e6:.2f}M"
+        return f"${num:,.2f}"
+    except Exception:
+        return "N/A"
 
 def fetch_stock_price(ticker):
     try:
         stock = yf.Ticker(ticker)
-        hist = stock.history(period="1y")
-        hist = hist.dropna(subset=["Close", "High", "Low"])
+        hist = stock.history(period="1y", interval="1d", auto_adjust=False)
         
+        if hist is None or hist.empty:
+            hist = stock.history(period="5d", interval="1d")
+            
+        if hist is None or hist.empty:
+            return None
+            
+        hist = hist.dropna(subset=["Close"])
         if hist.empty:
-            return None, None, None, None
-        price = hist["Close"].iloc[-1]
-        date = hist.index[-1].date()
-        
-        week_52_high = hist["High"].max()
-        week_52_low = hist["Low"].min()
-        
-        return price, date, week_52_high, week_52_low 
-    except Exception:
-        return None, None, None, None
+            return None
 
+        price = float(hist["Close"].iloc[-1])
+        date = hist.index[-1].strftime('%Y-%m-%d')
+        week_52_high = float(hist["High"].max()) if "High" in hist else price
+        week_52_low = float(hist["Low"].min()) if "Low" in hist else price
+        
+        # Day Change
+        if len(hist) >= 2:
+            prev_close = float(hist["Close"].iloc[-2])
+            day_change = price - prev_close
+            day_change_pct = (day_change / prev_close) * 100
+        else:
+            day_change = 0.0
+            day_change_pct = 0.0
+
+        # Fundamentals via stock.info
+        info = stock.info or {}
+        market_cap_raw = info.get("marketCap")
+        market_cap = format_large_number(market_cap_raw)
+        
+        pe_ratio = info.get("trailingPE") or info.get("forwardPE")
+        pe_formatted = f"{pe_ratio:.2f}x" if pe_ratio else "N/A (No positive earnings)"
+
+        div_yield = info.get("dividendYield")
+        div_formatted = f"{(div_yield * 100):.2f}%" if div_yield else "0.00% (No dividend)"
+        
+        return {
+            "ticker": ticker,
+            "price": price,
+            "date": date,
+            "high": week_52_high,
+            "low": week_52_low,
+            "day_change": day_change,
+            "day_change_pct": day_change_pct,
+            "market_cap": market_cap,
+            "pe_ratio": pe_formatted,
+            "dividend_yield": div_formatted
+        }
+    except Exception as e:
+        print(f"[ERROR] Failed fetching data for {ticker}: {e}")
+        return None
+    
 def generate_final_response(user_prompt, ticker_data):
-    price_info = "\n".join(
-        f"Stock: {ticker} | Current Price: ${price:.2f} (Date: {date}) | 52-Week High: ${high:.2f} | 52-Week Low: ${low:.2f}"
-        for ticker, price, date, high, low in ticker_data
-    )
+    price_info_list = []
+    for data in ticker_data:
+        sign = "+" if data["day_change"] >= 0 else ""
+        indicator = "🟢 Up" if data["day_change"] >= 0 else "🔴 Down"
+        
+        price_info_list.append(
+            f"Stock: {data['ticker']} | Price: ${data['price']:.2f} (Date: {data['date']}) | "
+            f"Today's Change: {sign}${data['day_change']:.2f} ({sign}{data['day_change_pct']:.2f}%) [{indicator}] | "
+            f"52-Week Range: ${data['low']:.2f} - ${data['high']:.2f} | "
+            f"Market Cap: {data['market_cap']} | P/E Ratio: {data['pe_ratio']} | Dividend Yield: {data['dividend_yield']}"
+        )
+    
+    price_info = "\n".join(price_info_list)
     
     prompt = f"""
     The user asked: "{user_prompt}"
@@ -61,14 +133,18 @@ def generate_final_response(user_prompt, ticker_data):
     Market Data:
     {price_info}
     
-    Format your response clearly using Markdown:
+    Format the response strictly with Markdown:
     - **Header:** State the company name/ticker and current price in bold.
     - **Key Highlights (Bullet points):**
       * **Current Price:** $X.XX
-      * **52-Week High:** $X.XX
-      * **52-Week Low:** $X.XX
-    - **Analysis:** 1-2 concise sentences analyzing where the price sits relative to its 52-week range.
-    - **Closing:** A short single-line follow-up asking what they want to check next.
+      * **Today's Change:** +$X.XX (+X.XX%) 🟢 OR -$X.XX (-X.XX%) 🔴
+      * **52-Week Range:** Low $X.XX – High $X.XX
+    - **Valuation & Fundamentals (Bullet points):**
+      * **Market Cap:** $X.XX B/T
+      * **P/E Ratio:** X.XX
+      * **Dividend Yield:** X.XX%
+    - **Analysis:** 1-2 concise sentences summarizing the stock's momentum and valuation context.
+    - **Closing:** A short single-line follow-up asking what they want to explore next.
 
     Do not output dense, unbroken paragraphs.
     """
@@ -102,9 +178,9 @@ def handle_request():
     
     ticker_data = []
     for ticker in tickers:
-        price, date, week_52_high, week_52_low = fetch_stock_price(ticker)
-        if price is not None:
-            ticker_data.append((ticker, price, date, week_52_high, week_52_low))
+        stock_data = fetch_stock_price(ticker)
+        if stock_data is not None:
+            ticker_data.append(stock_data)
     
     if not ticker_data:
         final_output = "No valid stock data available for the tickers mentioned."
