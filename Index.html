@@ -1,67 +1,134 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StocksAI ChatBot</title>
-    <link rel="stylesheet" href="Style.css">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="Style.css">
+    <!-- Marked.js Markdown Engine -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
 
-    <button id="sidebar-toggle" class = "sidebar-toggle">
-        <span class="material-icons">menu</span>
-    </button>
-
-    <div id="sidebar" class="sidebar">
-        <div class="sidebar-hader">
-            <h2>Recent Chats</h2>
-            <button id="sidebar-close" class="sidebar-close">
-                <span class="material-icon">close</span>
+    <aside id="sidebar" class="sidebar collapsed">
+        <div class="sidebar-top">
+            <button id="sidebar-toggle" class="sidebar-toggle" title="Toggle Navigation">
+                <span class="material-icons">menu</span>
+            </button>
+            <button id="new-chat-btn" class="new-chat-btn" title="New Chat">
+                <span class="material-icons">add</span>
+                <span class="nav-text">New Chat</span>
             </button>
         </div>
 
-        <button id="new-chat-btn" class="new-chat-btn">
-            <span class="material-icons">add</span>
-            New Chat
-        </button>
+        <div class="sidebar-nav-items">
+            <div class="nav-item active" title="Market Terminal">
+                <span class="material-icons">analytics</span>
+                <span class="nav-text">Market Terminal</span>
+            </div>
+            <div class="nav-item" title="Watchlist">
+                <span class="material-icons">show_chart</span>
+                <span class="nav-text">Watchlist</span>
+            </div>
+            <div class="nav-item" title="Portfolio">
+                <span class="material-icons">account_balance_wallet</span>
+                <span class="nav-text">Portfolio</span>
+            </div>
+            <div class="nav-item" title="Settings">
+                <span class="material-icons">tune</span>
+                <span class="nav-text">Settings</span>
+            </div>
+        </div>
+
+        <div class="sidebar-section-label nav-text">Recent Chats</div>
         <div id="chat-history" class="chat-history"></div>
-    </div>
+    </aside>
 
     <div id="sidebar-overlay" class="sidebar-overlay"></div>
 
-    <div id="stocksai-header">StocksAI</div>
+    <header id="stocksai-header">
+        <span class="header-badge">Terminal</span>
+        <span>StocksAI</span>
+    </header>
 
-    <div id="page-wrapper">
+    <main id="page-wrapper">
         <div id="chatbot-container">
-            <div class="message-content">
-                
-                <div id="loading-animation" class="loading-animation hidden">
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                </div>
-
-                
-                <span id="bot-status-text" class="bot-status-text hidden"></span>
-
-               
-                <div id="bot-response-text" class="bot-text hidden"></div>
-            </div>
             <div id="chat-display">
+                <div id="hero-center" class="hero-center">
+                    <div class="action-buttons-grid">
+                        <button class="hero-btn action-price" data-action="Get Price" data-icon="payments">
+                            <span class="material-icons">payments</span>
+                            <span>Get Price</span>
+                        </button>
+                        <button class="hero-btn action-chart" data-action="View Chart" data-icon="insert_chart">
+                            <span class="material-icons">insert_chart</span>
+                            <span>View Chart</span>
+                        </button>
+                        <button class="hero-btn action-compare" data-action="Compare Price" data-icon="compare_arrows">
+                            <span class="material-icons">compare_arrows</span>
+                            <span>Compare Price</span>
+                        </button>
+                        <button class="hero-btn action-analyse" data-action="Analyse" data-icon="insights">
+                            <span class="material-icons">insights</span>
+                            <span>Analyse</span>
+                        </button>
+                    </div>
+                    
+                    <div class="hero-headline-container">
+                        <h1 id="rotatingHeadline" class="hero-subtitle">What do you wanna know today?</h1>
+                    </div>
+                </div>
             </div>
 
             <div class="search-container">
-                <textarea id="messageInput" placeholder="Ask about stocks..." class="search-input" rows="1"></textarea>
-                <button type="submit" class="search-button" id="sendButton">
-                    <span class="material-icons">send</span>
+                <div class="feature-attach-wrapper">
+                    <button type="button" id="featureMenuBtn" class="feature-menu-btn" title="Add analysis mode">
+                        <span class="material-icons">add</span>
+                    </button>
+                    
+                    <div id="featurePopup" class="feature-popup hidden">
+                        <div class="popup-title">Analysis Mode</div>
+                        <button class="popup-item" data-action="Get Price" data-icon="payments">
+                            <span class="material-icons">payments</span>
+                            <span>Get Price</span>
+                        </button>
+                        <button class="popup-item" data-action="View Chart" data-icon="insert_chart">
+                            <span class="material-icons">insert_chart</span>
+                            <span>View Chart</span>
+                        </button>
+                        <button class="popup-item" data-action="Compare Price" data-icon="compare_arrows">
+                            <span class="material-icons">compare_arrows</span>
+                            <span>Compare Price</span>
+                        </button>
+                        <button class="popup-item" data-action="Analyse" data-icon="insights">
+                            <span class="material-icons">insights</span>
+                            <span>Analyse</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="input-content-area">
+                    <div id="activeFeatureBadge" class="active-feature-badge hidden">
+                        <span id="badgeIcon" class="material-icons badge-icon">insights</span>
+                        <span id="badgeText">Analyse</span>
+                        <button type="button" id="removeBadgeBtn" class="badge-close">
+                            <span class="material-icons">close</span>
+                        </button>
+                    </div>
+                    <textarea id="messageInput" placeholder="Ask about stocks, tickers, or financial metrics..." class="search-input" rows="1"></textarea>
+                </div>
+
+                <button type="submit" class="search-button" id="sendButton" title="Send Request">
+                    <span class="material-icons">arrow_upward</span>
                 </button>
             </div>
         </div>
-    </div>
+    </main>
+
     <script src="script.js"></script>
 </body>
 </html>
